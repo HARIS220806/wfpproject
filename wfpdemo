@@ -1,0 +1,78 @@
+import { useState } from 'react'
+function App(){
+  const[movie ,Setmovie]=useState([
+    {_id:1,title:"Aranmanai",director:"Sundar C",year:2014},
+    {_id:2,title:"Ponniyin Selvan",director:"Mani Ratnam",year:2022},
+  ]);
+const [title,setTitle]=useState("");
+const[director,setDirector]=useState("");
+const[year,setYear]=useState("");
+const[search,setSearch]=useState("");
+const [error, setError] = useState('');
+
+function validateForm() {
+  if (!title.trim()) {
+    return 'Title is required.';
+  }
+  if (!director.trim()) {
+    return 'Director is required.';
+  }
+  if (!year) {
+    return 'Year is required.';
+  }
+  if (isNaN(year) || year.length !== 4) {
+    return 'Year must be a valid 4-digit number.';
+  }
+  return '';
+}
+
+function add(){
+  const validationError = validateForm();
+  if (validationError) {
+    setError(validationError);
+    return;
+  }
+
+  const newMovie = {
+    _id: movie.length + 1,
+    title: title.trim(),
+    director: director.trim(),
+    year: Number(year),
+  };
+
+  setMovie([...movie, newMovie]);
+  setTitle('');
+  setDirector('');
+  setYear('');
+  setError('');
+}
+function deleted(id){
+  Setmovie(movie.filter((movie)=>movie._id!==id));
+}
+function searchMovie(){
+  return movie.filter((movie)=>movie.title.toLowerCase().includes(search.toLowerCase()));
+}
+return(
+  <div>
+    <h1>Movie List</h1>
+    <input type="text" placeholder="Search by title" value={search} onChange={(e)=>setSearch(e.target.value)}/>
+    <ul>
+      {searchMovie().map((movie)=>(
+        <li key={movie._id}>
+          {movie.title} - {movie.director} - {movie.year}
+          <button onClick={()=>deleted(movie._id)}>Delete</button>
+        </li>
+      ))}
+    </ul>
+    <h2>Add Movie</h2>
+    {error && <p style={{ color: 'red' }}>{error}</p>}
+
+    <input type="text" placeholder="Title" value={title} onChange={(e)=>setTitle(e.target.value)}/>
+    <input type="text" placeholder="Director" value={director} onChange={(e)=>setDirector(e.target.value)}/>      
+
+    <input type="text" placeholder="Year" value={year} onChange={(e)=>setYear(e.target.value)}/>
+    <button onClick={add}>Add</button>
+  </div>
+);
+}
+export default App;
